@@ -8,7 +8,6 @@ const {
 } = require("../controllers/course.controller");
 
 const router = express.Router();
-
 router.get("/", getAllCourses);
 router.get("/:id", getCourseById);
 router.post("/", addCourse);
