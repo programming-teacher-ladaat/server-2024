@@ -30,6 +30,19 @@ exports.getCourseById = (req, res, next) => {
     }
 };
 
+exports.getCoursesWithUsers = async (req, res, next) => {
+    try {
+        const courses = await Course.find()
+            // .populate('users') // מחזיר את כל הפרטים מאוסף משתמשים join-על איזה שדה תעשה את ה
+            .populate('users', 'username email -_id') // מחזיר את חלק מהפרטים מאוסף משתמשים join-על איזה שדה תעשה את ה
+            .select('-__v'); // __v בלי השדה
+            // אם הקוד לא קיים באוסף משתמשים - לא יחזרו פרטי האוביקט
+        return res.json(courses);
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.addCourse = async (req, res, next) => {
     // console.log(req.body);
     // if (req.body.id) {

@@ -16,8 +16,8 @@ require('./config/db')
 const app = express();
 
 // middleware
-app.use(express.json()); // req.body
-app.use(express.urlencoded({ extended: true })); // req.body
+app.use(express.json()); // req.body for json data
+app.use(express.urlencoded({ extended: true })); // req.body for form-data (with files)
 
 app.use(morgan("dev")); // הדפסת המידע של כל בקשה
 // app.use(cors({origin:'http:// localhost:4200'})); // אפשור רק לכתובת מסוימת

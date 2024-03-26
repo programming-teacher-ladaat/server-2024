@@ -1,10 +1,18 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 
+// ניצור סכמה חדשה עם הנתונים הדרושים מתוך סכמת הקורס
+const minimalCourseSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    numLessons: { type: Number, min: 1, default: 10 },
+})
+
 const userSchema = new mongoose.Schema({
+    // _id: נוסף אוטומטית
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true, minlength: 4 },
+    password: { type: String, required: true, minlength: [4, 'password length < 4'] },
+    courses: [minimalCourseSchema]
 })
 
 // לפני כל שמירה באוסף של משתמשים
@@ -23,4 +31,5 @@ userSchema.pre('save', function (next) {
     })
 })
 
+module.exports.userSchema = userSchema;
 module.exports.User = mongoose.model('users', userSchema);

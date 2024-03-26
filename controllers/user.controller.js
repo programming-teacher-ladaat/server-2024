@@ -33,13 +33,13 @@ exports.signIn = async (req, res, next) => {
 // הרשמה - משתמש חדש
 exports.signUp = async (req, res, next) => {
     // קבלת שם, מייל וסיסמא מגוף ההודעה
-    const { username, email, password } = req.body;
+    const { username, email, password, courses } = req.body;
 
     // לא נרצה לשמור את הסיסמא במסד נתונים כמו שהיא
     // אלא נשמור סיסמא מוצפנת
     try {
         // שמירת המשתמש בדטהבייס
-        const user = new User({ username, email, password });
+        const user = new User({ username, email, password, courses });
         await user.save(); // pre קודם כל הולך לפעולת
         // ושם מצפין את הסיסמא
 

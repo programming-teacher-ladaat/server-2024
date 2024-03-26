@@ -6,7 +6,6 @@ const {
 
 const router = express.Router();
 
-
 // signin - התחברות
 router.post('/signin', signIn)
 
