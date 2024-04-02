@@ -75,3 +75,29 @@ exports.signUp = async (req, res, next) => {
         return next({ message: error.message, status: 409 })
     }
 }
+
+// 4. בדיקת ההרשאות
+exports.updateUser = async (req, res, next) => {
+    const { id } = req.params;
+    const updatedUser = req.body;
+
+    try {
+
+        if (id !== updatedUser._id)
+            return next({ message: 'user id conflict', status: 409 });
+        // else if (req.user.role === "admin" || req.user.user_id === id) { // גם מנהל יכול לעדכן כל משתמש
+        else if (req.user.user_id === id) {
+            const u = await User.findByIdAndUpdate(
+                id,
+                { $set: updatedUser },
+                { new: true } // החזרת האוביקט החדש שהתעדכן
+            )
+            return res.json(u);
+        }
+        else { // משתמש עם קוד שונה מקוד המשתמש לעדכון
+            next({ message: `cannot update user: ${id}, you can update only your details`, status: 403 })
+        }
+    } catch (error) {
+        next(error);
+    }
+};

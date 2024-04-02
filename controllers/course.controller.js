@@ -36,7 +36,7 @@ exports.getCoursesWithUsers = async (req, res, next) => {
             // .populate('users') // מחזיר את כל הפרטים מאוסף משתמשים join-על איזה שדה תעשה את ה
             .populate('users', 'username email -_id') // מחזיר את חלק מהפרטים מאוסף משתמשים join-על איזה שדה תעשה את ה
             .select('-__v'); // __v בלי השדה
-            // אם הקוד לא קיים באוסף משתמשים - לא יחזרו פרטי האוביקט
+        // אם הקוד לא קיים באוסף משתמשים - לא יחזרו פרטי האוביקט
         return res.json(courses);
     } catch (error) {
         next(error);
@@ -54,10 +54,17 @@ exports.addCourse = async (req, res, next) => {
     //     return res.json({ message: "add courses" });
     // }
 
+    // req.user - אם הוא משתמש קיים, יש לו את התכונה
+
     try {
-        const c = new Course(req.body);
-        await c.save(); // מנסה לשמור במסד נתונים
-        return res.status(201).json(c); // כאן יהיו כל הנתונים של האוביקט שנשמר במ"נ
+        if (req.user.role === "admin") {
+            const c = new Course(req.body);
+            await c.save(); // מנסה לשמור במסד נתונים
+            return res.status(201).json(c); // כאן יהיו כל הנתונים של האוביקט שנשמר במ"נ
+        }
+        else {
+            next({ message: 'only admin can add course', status: 403 })
+        }
     } catch (error) {
         next(error);
     }

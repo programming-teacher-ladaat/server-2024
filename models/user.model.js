@@ -59,6 +59,7 @@ module.exports.userValidator = {
 // יצירת הטוקן
 module.exports.generateToken = (user) => {
     const privateKey = process.env.JWT_SECRET || 'JWT_SECRET'; // מחרוזת סודית שלפיה נוצר הטוקן
-    const token = jwt.sign({ role: user.role, user_id: user._id }, privateKey, { expiresIn: '1h' }); // יצירת הטוקן + תפוגה
+    const data = { role: user.role, user_id: user._id }; // הנתונים שרלוונטיים עבור הרשאות משתמש
+    const token = jwt.sign(data, privateKey, { expiresIn: '1h' }); // יצירת הטוקן + תפוגה
     return token;
 }
