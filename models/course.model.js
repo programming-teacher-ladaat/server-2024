@@ -18,7 +18,17 @@ const lecturerSchema = new mongoose.Schema({
 const courseSchema = new mongoose.Schema({
     title: { type: String, required: true },
     lecturer: lecturerSchema,
-    categories: [String],
+    categories: {
+        type: [String],
+        validate: {
+            validator(v) {
+                // v -  המערך
+                // true/false - האם הערך תקין
+                return v && v.length <= 3;
+            },
+            message: 'must have most 3 categories'
+        }
+    },
     numLessons: { type: Number, min: 1, default: 10 },
     // users: [userSchema] // userSchema יוזרס יכיל מערך מסוג
     users: [{ type: mongoose.Types.ObjectId, ref: 'users' }] // ref כדי שנוכל לחבר בין אוספים חובה לכתוב

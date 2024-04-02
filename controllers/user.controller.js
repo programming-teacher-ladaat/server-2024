@@ -1,7 +1,13 @@
 const bcrypt = require('bcrypt');
-const { User } = require("../models/user.model");
+const Joi = require('joi');
+const { User, generateToken } = require("../models/user.model");
+
 
 exports.signIn = async (req, res, next) => {
+    // const v = userValidator.loginSchema.validate(req.body);
+    // userValidator.loginSchema // פונקציה שבודקת תקינות
+
+    // if (v) {
     // קבלת מייל וסיסמא מגוף ההודעה
     const { email, password } = req.body;
 
@@ -17,17 +23,28 @@ exports.signIn = async (req, res, next) => {
                 return next(new Error(err.message));
 
             if (same) {// האם הסיסמאות שוות
-                return res.send({ user });
+                // delete user.password; // מחיקת הסיסמא ממה שחוזר ללקוח
+                const token = generateToken(user);
+                // const token = "generateToken(user)";
+                user.password = "****";
+                return res.send({ user, token });
             }
 
             // מחזירים תשובה כללית של לא מורשה
             // כי כך מאובטח יותר
             // אחרת המשתמש יוכל להכניס סיסמאות למייל קיים עד שימצא את הסיסמא
-            next({ message: 'Auth Failed', status: 401 })
+            return next({ message: 'Auth Failed', status: 401 })
         })
     }
-
-    // החזרת המשתמש + טוקן, אם לא קיים - 401
+    else {
+        // החזרת המשתמש + טוקן, אם לא קיים - 401
+        return next({ message: 'Auth Failed', status: 401 })
+    }
+    // }
+    // else {
+    //     // החזרת המשתמש + טוקן, אם לא קיים - 401
+    //     return next({ message: 'details not correct', status: 401 })
+    // }
 }
 
 // הרשמה - משתמש חדש
@@ -49,7 +66,11 @@ exports.signUp = async (req, res, next) => {
         // נבדק ע"י המונגוס
 
         // החזרת המשתמש
-        return res.status(201).json(user);
+        const token = generateToken(user);
+        // const token = "generateToken(user)";
+        user.password = "****";
+        // delete user.password; // מחיקת הסיסמא ממה שחוזר ללקוח
+        return res.status(201).json({ user, token });
     } catch (error) {
         return next({ message: error.message, status: 409 })
     }
